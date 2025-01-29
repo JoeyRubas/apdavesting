@@ -82,21 +82,25 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_ENV = os.getenv("MYSQL_DATABASE")
 
-if DATABASE_URL and DATABASE_URL.startswith("mysql://"):
-    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+mysqlconnector://", 1)
 
-if DATABASE_URL:  # Running on Railway
+
+if DATABASE_ENV:  # Running on Railway
     print("Using Railway MySQL")
     DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            engine="django.db.backends.mysql",
-            options={"driver": "mysql.connector"},
-        )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv("MYSQL_DATABASE", "yourdbname"),
+        'USER': os.getenv("MYSQL_USER", "youruser"),
+        'PASSWORD': os.getenv("MYSQL_PASSWORD", "yourpassword"),
+        'HOST': os.getenv("MYSQL_HOST", "localhost"),
+        'PORT': os.getenv("MYSQL_PORT", "3306"),
+        'OPTIONS': {
+            'driver': 'mysql.connector'
+        }
     }
+}
 else:  # Default to SQLite for local development
     print("Using SQLite")
     DATABASES = {
