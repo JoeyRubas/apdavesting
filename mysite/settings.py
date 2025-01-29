@@ -93,7 +93,6 @@ if DATABASE_URL:  # Running on Railway
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
-            engine="django.db.backends.mysql",  # Explicitly set backend
         )
     }
 else:  # Default to SQLite for local development
