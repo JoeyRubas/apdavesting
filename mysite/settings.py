@@ -82,20 +82,23 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 
- 
-if os.getenv("MYSQL_DATABASE"):  # Running on Railway
+if DATABASE_URL and DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+mysqlconnector://", 1)
+
+if DATABASE_URL:  # Running on Railway
     print("Using Railway MySQL")
     DATABASES = {
-    'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': os.getenv("MYSQL_DATABASE", "yourdbname"),
-        'USER': os.getenv("MYSQL_USER", "youruser"),
-        'PASSWORD': os.getenv("MYSQL_PASSWORD", "yourpassword"),
-        'HOST': os.getenv("MYSQL_HOST", "localhost"),
-        'PORT': int(os.getenv("MYSQL_PORT", "3306")),
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            engine="django.db.backends.mysql",
+        )
     }
-}
+    if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
+        DATABASES["default"]["ENGINE"] = "mysql.connector.django"
+
 else:  # Default to SQLite for local development
     print("Using SQLite")
     DATABASES = {
@@ -105,12 +108,6 @@ else:  # Default to SQLite for local development
         }
     }
 
-print("Database settings:")
-print(f"ENGINE: {DATABASES['default']['ENGINE']}")
-print(f"NAME: {DATABASES['default']['NAME']}")
-print(f"USER: {DATABASES['default']['USER']}")
-print(f"HOST: {DATABASES['default']['HOST']}")
-print(f"PORT: {DATABASES['default']['PORT']}")
 
 
 # Password validation
