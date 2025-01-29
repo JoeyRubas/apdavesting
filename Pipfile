@@ -13,10 +13,10 @@ yahoo-fin = "*"
 gunicorn = "*"
 requests_html = "*"
 dj-database-url = "*"
-
+mysqlclient = "*"
 
 [dev-packages]
-mysqlclient = "*"
+
 
 [requires]
 python_version = "3.12"
