@@ -4,6 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+django = "==5.0.0"
+django-bootstrap5 = "*"
+celery = "*"
+redis = "*"
+django-celery-beat = "*"
+
 
 [dev-packages]
 
