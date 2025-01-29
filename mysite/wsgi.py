@@ -1,16 +1,15 @@
-"""
-WSGI config for mysite project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/howto/deployment/wsgi/
-"""
-
 import os
+import sys
+
+# Add the project directory to the system path
+sys.path.append('/home/joey/apdavesting')
+
+# Add the virtual environment’s site-packages
+sys.path.append('/home/joey/apdavesting/venv/lib/python3.12/site-packages')
+
+# Ensure the correct settings module is used
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 application = get_wsgi_application()
