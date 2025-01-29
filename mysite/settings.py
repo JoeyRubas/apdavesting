@@ -82,9 +82,20 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    "default": dj_database_url.config(default="sqlite:///db.sqlite3")
-}
+if os.getenv("DATABASE_URL"):  # If running on Railway (DATABASE_URL is set)
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL'),  # Use Railway MySQL
+            conn_max_age=600,
+        )
+    }
+else:  # Default to SQLite for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(os.path.dirname(__file__), 'db.sqlite3'),
+        }
+    }
 
 
 # Password validation

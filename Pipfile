@@ -13,6 +13,7 @@ yahoo-fin = "*"
 gunicorn = "*"
 requests_html = "*"
 dj-database-url = "*"
+mysqlclient = "*"
 
 [dev-packages]
 

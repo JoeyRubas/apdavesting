@@ -15,13 +15,27 @@ def vote_request(request, request_type, request_id):
     else:
         trade_request = get_object_or_404(buyRequest, id=request_id)
 
+    # Check if the user has already voted in the session
+    if 'voted_requests' not in request.session:
+        request.session['voted_requests'] = []
+    
+    if request_id in request.session['voted_requests']:
+        messages.error(request, "You have already voted on this request.")
+        return redirect("index")
+
     if request.method == "POST":
         trade_request.votes += 1
         trade_request.save()
+        
+        # Store the voted request ID in the session
+        request.session['voted_requests'].append(request_id)
+        request.session.modified = True  # Ensure the session is saved
+
         messages.success(request, f"Your vote for {trade_request.ticker.symbol} has been counted!")
-        return redirect("index")  # Redirect to the index page
+        return redirect("index")
 
     return render(request, "vote.html", {"trade_request": trade_request})
+
 
 
 
@@ -42,9 +56,6 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
-
-def vote(request):
-    pass
 
 def sell_request(request):
     if request.method == 'POST':
