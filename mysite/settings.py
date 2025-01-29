@@ -90,15 +90,12 @@ if DATABASE_ENV:  # Running on Railway
     print("Using Railway MySQL")
     DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'NAME': os.getenv("MYSQL_DATABASE", "yourdbname"),
         'USER': os.getenv("MYSQL_USER", "youruser"),
         'PASSWORD': os.getenv("MYSQL_PASSWORD", "yourpassword"),
         'HOST': os.getenv("MYSQL_HOST", "localhost"),
-        'PORT': os.getenv("MYSQL_PORT", "3306"),
-        'OPTIONS': {
-            'driver': 'mysql.connector'
-        }
+        'PORT': int(os.getenv("MYSQL_PORT", "3306")),
     }
 }
 else:  # Default to SQLite for local development
