@@ -14,7 +14,7 @@ def update_portfolio_value():
         # Here, I am just simulating an API call to get the current share price
         # Replace with your actual API code or library
     
-            t.share_price = stock_info.get_live_price(t.symbol)
+            t.value = stock_info.get_live_price(t.symbol)
             t.save()
 
     # Step 2: Update the total value of the portfolio
@@ -23,7 +23,7 @@ def update_portfolio_value():
         portfolio_value = 0
         for pos in p.positions.all():
             # Calculate position value = shares * current share price
-            position_value = pos.shares * pos.ticker.share_price
+            position_value = pos.shares * pos.ticker.value
             portfolio_value += position_value
         total_value += portfolio_value + p.cash  # Add cash to portfolio value
 

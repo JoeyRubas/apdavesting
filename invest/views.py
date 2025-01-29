@@ -1,4 +1,5 @@
 # views.py
+from decimal import Decimal
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
@@ -6,6 +7,7 @@ from .forms import BuyRequestForm, SellRequestForm
 from .models import buyRequest, portfolio, sellRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
+from yahoo_fin import stock_info
 
 def vote_request(request, request_type, request_id):
     if request_type == 1:
@@ -48,18 +50,19 @@ def sell_request(request):
     if request.method == 'POST':
         form = SellRequestForm(request.POST)
         if form.is_valid():
-            portfolio_obj = portfolio.objects.first()  # Assuming one portfolio
+            portfolio_obj = portfolio.objects.first()  
             if not portfolio_obj:
                 messages.error(request, "No portfolio available.")
                 return redirect('sell_request')
-            position = form.cleaned_data['position']
-            position_obj = portfolio_obj.positions.get(id=position.id)
-            shares = form.cleaned_data['shares']
-            if shares <= 0:
-                messages.error(request, "Invalid number of shares.")
+            position_obj = form.cleaned_data['position']
+            if not position_obj.pk:
+                messages.error(request, "Invalid position selection.")
                 return redirect('sell_request')
+            shares = form.cleaned_data['shares']
             if position_obj.shares >= shares:
-                sellRequest.objects.create(position=position_obj, votes=0, shares=form.cleaned_data['shares'])
+                sell_request_obj = form.save(commit=False)
+                sell_request_obj.votes = 0 
+                sell_request_obj.save()
                 return redirect('index')
             else:
                 messages.error(request, "Not enough shares to sell.")
@@ -73,19 +76,22 @@ def buy_request(request):
         form = BuyRequestForm(request.POST)
         if form.is_valid():
             ticker_obj = form.cleaned_data['ticker']
-            shares = form.cleaned_data['shares']
-            portfolio_obj = portfolio.objects.first()  # Assuming one portfolio
-            if shares <= 0:
-                messages.error(request, "Invalid number of shares.")
-                return redirect('buy_request')
+            shares = Decimal(form.cleaned_data['shares'])
+            portfolio_obj = portfolio.objects.first()  
+
             if not portfolio_obj:
                 messages.error(request, "No portfolio available.")
                 return redirect('buy_request')
             
-            total_cost = shares * ticker_obj.share_price
-            if portfolio_obj.cash >= total_cost:
+            if not ticker_obj.pk:
+                messages.error(request, "Invalid ticker selection.")
+                return redirect('buy_request')
+            ticker_obj.value = Decimal(stock_info.get_live_price(ticker_obj.symbol))
+            ticker_obj.save()
+            total_cost = shares * ticker_obj.value
+            print(f"Shares: {shares}, Share Price: {ticker_obj.value}, Total Cost: {total_cost}")
 
-                # Create buy request with 0 votes initially
+            if portfolio_obj.cash >= total_cost:
                 buyRequest.objects.create(ticker=ticker_obj, shares=shares, votes=0)
                 
                 messages.success(request, "Buy request submitted successfully.")

@@ -35,7 +35,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=200)),
                 ('symbol', models.CharField(max_length=10)),
                 ('value', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('share_price', models.DecimalField(decimal_places=2, max_digits=10)),
             ],
         ),
         migrations.CreateModel(

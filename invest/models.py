@@ -1,12 +1,12 @@
 from django.db import models
 from yahoo_fin import stock_info
 from decimal import Decimal
+from django.contrib import messages
 
 class ticker(models.Model):
     name = models.CharField(max_length=200)
     symbol = models.CharField(max_length=10)
     value = models.DecimalField(max_digits=10, decimal_places=2)
-    share_price = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return self.symbol
@@ -59,6 +59,7 @@ class buyRequest(models.Model):
                 position_obj.save()
                 portfolio_obj.positions.add(position_obj)
                 self.delete()
+        
 
     @property
     def cost(self):

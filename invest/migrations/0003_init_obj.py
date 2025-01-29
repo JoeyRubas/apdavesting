@@ -23,7 +23,7 @@ def create_portfolio_and_tickers(apps, schema_editor):
     
     # Create ticker objects
     for name, symbol in tickers:
-        Ticker.objects.create(name=name, symbol=symbol, value=0.00, share_price=0.00)
+        Ticker.objects.create(name=name, symbol=symbol, value=0.00)
 
 class Migration(migrations.Migration):
     
