@@ -81,6 +81,7 @@ class sellRequest(models.Model):
             super(sellRequest, self).save(*args, **kwargs)
             self.position.ticker.value = stock_info.get_live_price(self.ticker.symbol)
             self.position.ticker.save()
+
             if self.votes >= 5:
                 portfolio_obj = portfolio.objects.first()
                 if not portfolio_obj:

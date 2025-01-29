@@ -49,19 +49,16 @@ def sell_request(request):
         form = SellRequestForm(request.POST)
         if form.is_valid():
             portfolio_obj = portfolio.objects.first()  # Assuming one portfolio
-
             if not portfolio_obj:
                 messages.error(request, "No portfolio available.")
                 return redirect('sell_request')
-            position_obj = form.cleaned_data['position']
-            if position_obj.shares >= float(form.cleaned_data['shares']):
-                portfolio_obj.cash += form.cleaned_data['shares'] * position_obj.purchase_price
-                portfolio_obj.save()
-                position_obj.shares -= form.cleaned_data['shares']
-                if position_obj.shares == 0:
-                    position_obj.delete()
-                else:
-                    position_obj.save()
+            position = form.cleaned_data['position']
+            position_obj = portfolio_obj.positions.get(id=position.id)
+            shares = form.cleaned_data['shares']
+            if shares <= 0:
+                messages.error(request, "Invalid number of shares.")
+                return redirect('sell_request')
+            if position_obj.shares >= shares:
                 sellRequest.objects.create(position=position_obj, votes=0, shares=form.cleaned_data['shares'])
                 return redirect('index')
             else:
@@ -78,16 +75,16 @@ def buy_request(request):
             ticker_obj = form.cleaned_data['ticker']
             shares = form.cleaned_data['shares']
             portfolio_obj = portfolio.objects.first()  # Assuming one portfolio
-
+            if shares <= 0:
+                messages.error(request, "Invalid number of shares.")
+                return redirect('buy_request')
             if not portfolio_obj:
                 messages.error(request, "No portfolio available.")
                 return redirect('buy_request')
             
             total_cost = shares * ticker_obj.share_price
             if portfolio_obj.cash >= total_cost:
-                portfolio_obj.cash -= total_cost
-                portfolio_obj.save()
-                
+
                 # Create buy request with 0 votes initially
                 buyRequest.objects.create(ticker=ticker_obj, shares=shares, votes=0)
                 
