@@ -83,6 +83,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 if os.getenv("DATABASE_URL"):  # If running on Railway (DATABASE_URL is set)
+    print("Using Railway MySQL")
     DATABASES = {
         'default': dj_database_url.config(
             default=os.getenv('DATABASE_URL'),  # Use Railway MySQL
@@ -90,6 +91,7 @@ if os.getenv("DATABASE_URL"):  # If running on Railway (DATABASE_URL is set)
         )
     }
 else:  # Default to SQLite for local development
+    print("Using SQLite")
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
