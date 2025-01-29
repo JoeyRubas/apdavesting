@@ -84,20 +84,16 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-if DATABASE_URL and DATABASE_URL.startswith("mysql://"):
-    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+mysqlconnector://", 1)
 
-if DATABASE_URL:  # Running on Railway
-    print("Using Railway MySQL")
+if DATABASE_URL:  # Running on Railway or other platforms
+    print("Using Railway PostgreSQL")
     DATABASES = {
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,
-            engine="django.db.backends.mysql",
+            engine="django.db.backends.postgresql",
         )
     }
-    if DATABASES["default"]["ENGINE"] == "django.db.backends.mysql":
-        DATABASES["default"]["ENGINE"] = "mysql.connector.django"
 
 else:  # Default to SQLite for local development
     print("Using SQLite")
