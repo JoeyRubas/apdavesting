@@ -9,7 +9,7 @@ django-bootstrap5 = "*"
 celery = "*"
 redis = "*"
 django-celery-beat = "*"
-
+yahoo-fin = "*"
 
 [dev-packages]
 
