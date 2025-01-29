@@ -85,14 +85,18 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 
-if DATABASE_URL:  # Running on Railway or other platforms
+if DATABASE_URL: 
     print("Using Railway PostgreSQL")
     DATABASES = {
-        'default': dj_database_url.config(
-            default=DATABASE_URL,
-            conn_max_age=600,
-            engine="django.db.backends.postgresql",
-        )
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('DB_NAME', 'postgres'),
+            'USER': os.getenv('DB_USER', 'postgres'),
+            'PASSWORD': os.getenv('DB_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', 'localhost'),
+            'PORT': os.getenv('DB_PORT', '5432'),
+            'CONN_MAX_AGE': 600,
+        }
     }
 
 else:  # Default to SQLite for local development
