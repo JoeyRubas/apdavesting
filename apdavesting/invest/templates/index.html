@@ -1,0 +1,111 @@
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Index</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Portfolio Overview</h1>
+
+    <!-- Display cash balance -->
+    <div class="mb-3">
+        <h2>Cash Balance: <span class="text-primary">${{ cash }}</span></h2>
+    </div>
+
+    <!-- Display portfolio value -->
+    <div class="mb-4">
+        <h2>Portfolio Value: <span class="text-success">${{ portfolio_value }}</span></h2>
+    </div>
+
+     <!-- Portfolio Positions -->
+     <div class="mb-4">
+        <h3>Current Positions</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Ticker</th>
+                    <th>Shares</th>
+                    <th>Purchase Price</th>
+                    <th>Total Value</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for position in positions %}
+                <tr>
+                    <td>{{ position.ticker.symbol }}</td>
+                    <td>{{ position.shares }}</td>
+                    <td>${{ position.purchase_price }}</td>
+                    <td>${{ position.current_value }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-muted text-center">No positions available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if messages %}
+        <div class="mb-4">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <!-- Buy Requests List -->
+        <div class="col-md-6">
+            <h3>Buy Requests</h3>
+            <ul class="list-group">
+                {% for request in buy_requests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ request.ticker.symbol }}</strong> - 
+                             Buy {{ request.shares }} shares @ ${{ request.cost }}
+                            <span class="text-muted">({{ request.votes }} votes)</span>
+                        </div>
+                        <a href="{% url 'vote' 0 request.id %}" class="btn btn-primary btn-sm">Vote</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No buy requests available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Sell Requests List -->
+        <div class="col-md-6">
+            <h3>Sell Requests</h3>
+            <ul class="list-group">
+                {% for request in sell_requests %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{ request.ticker.symbol }}</strong> - 
+                            Sell {{ request.shares }} shares @ ${{ request.cost }}
+                            <span class="text-muted">({{ request.votes }} votes)</span>
+                        </div>
+                        <a href="{% url 'vote' 1 request.id %}" class="btn btn-primary btn-sm">Vote</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No sell requests available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+   
+
+    <!-- Link to make a request -->
+    <div class="mb-4">
+        <a href="{% url 'buy_request' %}" class="btn btn-primary">Make a Buy Request</a>
+        <a href="{% url 'sell_request' %}" class="btn btn-primary">Make a Sell Request</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{% load django_bootstrap5 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote for Request</title>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body class="container mt-4">
+    <h1 class="mb-4">Vote for Trade Request</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ trade_request.ticker.symbol }}</h5>
+            <p class="card-text">
+                 {{ trade_request.shares }} shares @ ${{ trade_request.cost }}
+            </p>
+            <p class="text-muted">Current Votes: {{ trade_request.votes }}</p>
+        </div>
+    </div>
+
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success">Vote</button>
+        <a href="{% url 'index' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</body>
+</html>
