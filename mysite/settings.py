@@ -82,11 +82,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASE_ENV = os.getenv("MYSQL_DATABASE")
 
-
-
-if DATABASE_ENV:  # Running on Railway
+ 
+if os.getenv("MYSQL_DATABASE"):  # Running on Railway
     print("Using Railway MySQL")
     DATABASES = {
     'default': {
@@ -107,6 +105,12 @@ else:  # Default to SQLite for local development
         }
     }
 
+print("Database settings:")
+print(f"ENGINE: {DATABASES['default']['ENGINE']}")
+print(f"NAME: {DATABASES['default']['NAME']}")
+print(f"USER: {DATABASES['default']['USER']}")
+print(f"HOST: {DATABASES['default']['HOST']}")
+print(f"PORT: {DATABASES['default']['PORT']}")
 
 
 # Password validation
