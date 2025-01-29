@@ -10,6 +10,8 @@ celery = "*"
 redis = "*"
 django-celery-beat = "*"
 yahoo-fin = "*"
+gunicorn = "*"
+requests_html = "*"
 
 [dev-packages]
 
