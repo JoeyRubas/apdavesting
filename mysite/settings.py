@@ -84,6 +84,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+if DATABASE_URL and DATABASE_URL.startswith("mysql://"):
+    DATABASE_URL = DATABASE_URL.replace("mysql://", "mysql+mysqlconnector://", 1)
+
 if DATABASE_URL:  # Running on Railway
     print("Using Railway MySQL")
     DATABASES = {
